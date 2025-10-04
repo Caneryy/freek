@@ -19,6 +19,13 @@ export default function CustomerPage() {
   const [nfts, setNfts] = useState<ListedNFT[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentFeaturedIndex, setCurrentFeaturedIndex] = useState(0);
+  const [recentTransfers, setRecentTransfers] = useState<
+    Array<{
+      nft: ListedNFT;
+      recipient: string;
+      timestamp: Date;
+    }>
+  >([]);
 
   // Mock data for demonstration
   const mockNFTs: ListedNFT[] = useMemo(
@@ -141,6 +148,36 @@ export default function CustomerPage() {
   useEffect(() => {
     setNfts(mockNFTs);
     setLoading(false);
+
+    // Mock recent transfers data
+    const mockTransfers = [
+      {
+        nft: mockNFTs[0], // Golden Dragon #1
+        recipient: "0x1234...5678",
+        timestamp: new Date(Date.now() - 1000 * 60 * 5), // 5 minutes ago
+      },
+      {
+        nft: mockNFTs[4], // Digital Art #5
+        recipient: "0x9876...5432",
+        timestamp: new Date(Date.now() - 1000 * 60 * 15), // 15 minutes ago
+      },
+      {
+        nft: mockNFTs[6], // Pixel Art #7
+        recipient: "0xabcd...efgh",
+        timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
+      },
+      {
+        nft: mockNFTs[8], // Cool Frog #9
+        recipient: "0x5678...9abc",
+        timestamp: new Date(Date.now() - 1000 * 60 * 45), // 45 minutes ago
+      },
+      {
+        nft: mockNFTs[10], // Party Squad #11
+        recipient: "0xdef0...1234",
+        timestamp: new Date(Date.now() - 1000 * 60 * 60), // 1 hour ago
+      },
+    ];
+    setRecentTransfers(mockTransfers);
   }, [mockNFTs]);
 
   // Auto-rotate featured NFTs
@@ -204,39 +241,103 @@ export default function CustomerPage() {
         </p>
       </div>
 
-      {/* Legendary NFTs - Gallery View */}
-      <div className="py-12 px-4">
-        <h2 className="text-4xl font-bold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500">
-          ✨ LEGENDARY NFT&apos;ler
-        </h2>
-        <div
-          className="flex justify-center items-center gap-4 overflow-hidden cursor-pointer"
-          data-carousel="legendary"
-          onMouseEnter={() => setIsHoveringCarousel(true)}
-          onMouseLeave={() => setIsHoveringCarousel(false)}
-        >
-          {legendaryNFTs.map((nft, index) => {
-            // Calculate the display position based on currentFeaturedIndex
-            const displayIndex = (index - currentFeaturedIndex + 3) % 3;
-            const isCenter = displayIndex === 0;
+      {/* Main Content with Sidebar */}
+      <div className="flex gap-6 px-4">
+        {/* Main Content */}
+        <div className="flex-1">
+          {/* Legendary NFTs - Gallery View */}
+          <div className="py-12">
+            <h2 className="text-4xl font-bold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500">
+              ✨ LEGENDARY NFT&apos;ler
+            </h2>
+            <div
+              className="flex justify-center items-center gap-4 overflow-hidden cursor-pointer"
+              data-carousel="legendary"
+              onMouseEnter={() => setIsHoveringCarousel(true)}
+              onMouseLeave={() => setIsHoveringCarousel(false)}
+            >
+              {legendaryNFTs.map((nft, index) => {
+                // Calculate the display position based on currentFeaturedIndex
+                const displayIndex = (index - currentFeaturedIndex + 3) % 3;
+                const isCenter = displayIndex === 0;
 
-            return (
-              <div
-                key={`${nft.nftContract}-${nft.tokenId}`}
-                className={`transition-all duration-700 ease-in-out ${isCenter ? "scale-110 z-10" : "scale-90 z-0"}`}
-              >
-                <div
-                  className={`card bg-base-100 shadow-2xl rounded-2xl ring-4 ring-yellow-500 ring-opacity-90 shadow-yellow-500/50 ${
-                    isCenter ? "w-96" : "w-80"
+                return (
+                  <div
+                    key={`${nft.nftContract}-${nft.tokenId}`}
+                    className={`transition-all duration-700 ease-in-out ${isCenter ? "scale-110 z-10" : "scale-90 z-0"}`}
+                  >
+                    <div
+                      className={`card bg-base-100 shadow-2xl rounded-2xl ring-4 ring-yellow-500 ring-opacity-90 shadow-yellow-500/50 ${
+                        isCenter ? "w-96" : "w-80"
+                      }`}
+                    >
+                      <figure className="relative">
+                        <Image
+                          src={nft.imageUri}
+                          alt={nft.name}
+                          width={isCenter ? 384 : 320}
+                          height={isCenter ? 384 : 320}
+                          className={`w-full object-cover rounded-t-2xl ${isCenter ? "h-96" : "h-80"} ${nft.isSold ? "opacity-60 grayscale" : ""}`}
+                        />
+                        {nft.isSold && (
+                          <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-10">
+                            <div className="text-center">
+                              <div className="text-4xl mb-2">❌</div>
+                              <div className="text-white font-bold text-xl">SOLD OUT</div>
+                            </div>
+                          </div>
+                        )}
+                        <div className="absolute top-3 right-3 font-bold px-3 py-1 rounded-xl text-xs shadow-lg bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 text-black">
+                          LEGENDARY
+                        </div>
+                      </figure>
+                      <div className="card-body rounded-b-2xl">
+                        <h3 className={`card-title ${isCenter ? "text-xl" : "text-lg"}`}>{nft.name}</h3>
+                        <div className="flex justify-between items-center">
+                          <span className="text-sm font-medium">Fiyat:</span>
+                          <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500">
+                            {formatEther(nft.price)} MONAD
+                          </span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Scroll Indicator */}
+            <div className="flex justify-center mt-8 gap-2">
+              {legendaryNFTs.map((_, index) => (
+                <button
+                  key={index}
+                  className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                    index === currentFeaturedIndex ? "bg-yellow-400 scale-125" : "bg-gray-400 hover:bg-gray-300"
                   }`}
+                  onClick={() => setCurrentFeaturedIndex(index)}
+                />
+              ))}
+            </div>
+          </div>
+
+          {/* Rare NFTs - Gallery */}
+          <div className="py-16">
+            <h2 className="text-4xl font-bold text-center mb-12 text-transparent bg-clip-text bg-gradient-to-r from-gray-300 to-gray-400">
+              💎 RARE NFT&apos;ler
+            </h2>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
+              {rareNFTs.map(nft => (
+                <div
+                  key={`${nft.nftContract}-${nft.tokenId}`}
+                  className="card bg-base-100 shadow-xl rounded-2xl ring-2 ring-gray-400 ring-opacity-40 hover:ring-gray-300 hover:shadow-gray-400/50 transition-all duration-300 hover:scale-105"
                 >
                   <figure className="relative">
                     <Image
                       src={nft.imageUri}
                       alt={nft.name}
-                      width={isCenter ? 384 : 320}
-                      height={isCenter ? 384 : 320}
-                      className={`w-full object-cover rounded-t-2xl ${isCenter ? "h-96" : "h-80"} ${nft.isSold ? "opacity-60 grayscale" : ""}`}
+                      width={300}
+                      height={300}
+                      className={`w-full h-64 object-cover rounded-t-2xl ${nft.isSold ? "opacity-60 grayscale" : ""}`}
                     />
                     {nft.isSold && (
                       <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-10">
@@ -246,81 +347,83 @@ export default function CustomerPage() {
                         </div>
                       </div>
                     )}
-                    <div className="absolute top-3 right-3 font-bold px-3 py-1 rounded-xl text-xs shadow-lg bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 text-black">
-                      LEGENDARY
+                    <div className="absolute top-3 right-3 font-bold px-3 py-1 rounded-xl text-xs shadow-lg bg-gradient-to-r from-gray-400 to-gray-500 text-white">
+                      RARE
                     </div>
                   </figure>
                   <div className="card-body rounded-b-2xl">
-                    <h3 className={`card-title ${isCenter ? "text-xl" : "text-lg"}`}>{nft.name}</h3>
+                    <h3 className="card-title text-lg">{nft.name}</h3>
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium">Fiyat:</span>
-                      <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500">
+                      <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
                         {formatEther(nft.price)} MONAD
                       </span>
                     </div>
                   </div>
                 </div>
-              </div>
-            );
-          })}
+              ))}
+            </div>
+          </div>
         </div>
 
-        {/* Scroll Indicator */}
-        <div className="flex justify-center mt-8 gap-2">
-          {legendaryNFTs.map((_, index) => (
-            <button
-              key={index}
-              className={`w-3 h-3 rounded-full transition-all duration-300 ${
-                index === currentFeaturedIndex ? "bg-yellow-400 scale-125" : "bg-gray-400 hover:bg-gray-300"
-              }`}
-              onClick={() => setCurrentFeaturedIndex(index)}
-            />
-          ))}
-        </div>
-      </div>
+        {/* Sidebar - Recent Transfers */}
+        <div className="w-80 flex-shrink-0">
+          <div className="sticky top-4">
+            <div className="bg-base-100/90 backdrop-blur-sm rounded-2xl shadow-xl border border-purple-500/20 p-4">
+              <h3 className="text-xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
+                📊 Son Transferler
+              </h3>
+              <div className="space-y-3 max-h-96 overflow-y-auto scrollbar-hide">
+                {recentTransfers.map((transfer, index) => {
+                  const isLegendary =
+                    transfer.nft.name.includes("Dragon") ||
+                    transfer.nft.name.includes("Cat") ||
+                    transfer.nft.name.includes("Monkey");
+                  const timeAgo = Math.floor((Date.now() - transfer.timestamp.getTime()) / (1000 * 60));
 
-      {/* Rare NFTs - Gallery */}
-      <div className="py-16 px-4">
-        <h2 className="text-4xl font-bold text-center mb-12 text-transparent bg-clip-text bg-gradient-to-r from-gray-300 to-gray-400">
-          💎 RARE NFT&apos;ler
-        </h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
-          {rareNFTs.map(nft => (
-            <div
-              key={`${nft.nftContract}-${nft.tokenId}`}
-              className="card bg-base-100 shadow-xl rounded-2xl ring-2 ring-gray-400 ring-opacity-40 hover:ring-gray-300 hover:shadow-gray-400/50 transition-all duration-300 hover:scale-105"
-            >
-              <figure className="relative">
-                <Image
-                  src={nft.imageUri}
-                  alt={nft.name}
-                  width={300}
-                  height={300}
-                  className={`w-full h-64 object-cover rounded-t-2xl ${nft.isSold ? "opacity-60 grayscale" : ""}`}
-                />
-                {nft.isSold && (
-                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-10">
-                    <div className="text-center">
-                      <div className="text-4xl mb-2">❌</div>
-                      <div className="text-white font-bold text-xl">SOLD OUT</div>
+                  return (
+                    <div key={index} className="bg-base-200/50 rounded-xl p-3 border border-gray-600/30">
+                      <div className="flex items-center gap-3 mb-2">
+                        <Image
+                          src={transfer.nft.imageUri}
+                          alt={transfer.nft.name}
+                          width={40}
+                          height={40}
+                          className="w-10 h-10 object-cover rounded-lg"
+                        />
+                        <div className="flex-1 min-w-0">
+                          <div className="text-sm font-semibold truncate">{transfer.nft.name}</div>
+                          <div
+                            className={`text-xs px-2 py-1 rounded-full inline-block ${
+                              isLegendary
+                                ? "bg-gradient-to-r from-yellow-400 to-amber-500 text-black"
+                                : "bg-gradient-to-r from-gray-400 to-gray-500 text-white"
+                            }`}
+                          >
+                            {isLegendary ? "LEGENDARY" : "RARE"}
+                          </div>
+                        </div>
+                      </div>
+                      <div className="text-xs text-gray-400 space-y-1">
+                        <div className="flex justify-between">
+                          <span>Fiyat:</span>
+                          <span className="font-semibold text-purple-400">{formatEther(transfer.nft.price)} MONAD</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Alıcı:</span>
+                          <span className="font-mono text-xs">{transfer.recipient}</span>
+                        </div>
+                        <div className="flex justify-between">
+                          <span>Zaman:</span>
+                          <span>{timeAgo < 60 ? `${timeAgo}dk önce` : `${Math.floor(timeAgo / 60)}sa önce`}</span>
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                )}
-                <div className="absolute top-3 right-3 font-bold px-3 py-1 rounded-xl text-xs shadow-lg bg-gradient-to-r from-gray-400 to-gray-500 text-white">
-                  RARE
-                </div>
-              </figure>
-              <div className="card-body rounded-b-2xl">
-                <h3 className="card-title text-lg">{nft.name}</h3>
-                <div className="flex justify-between items-center">
-                  <span className="text-sm font-medium">Fiyat:</span>
-                  <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
-                    {formatEther(nft.price)} MONAD
-                  </span>
-                </div>
+                  );
+                })}
               </div>
             </div>
-          ))}
+          </div>
         </div>
       </div>
 
