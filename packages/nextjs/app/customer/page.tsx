@@ -200,9 +200,6 @@ export default function CustomerPage() {
           FREEK
         </h1>
         <p className="text-2xl font-semibold text-purple-400 tracking-wide mb-8">NFT&apos;lerinizi Hissedin</p>
-        <p className="text-xl text-gray-300 max-w-2xl mx-auto">
-          🎨 Benzersiz NFT koleksiyonumuzu keşfedin ve favori tasarımlarınızı seçin!
-        </p>
       </div>
 
       {/* Main Content with Sidebar */}
