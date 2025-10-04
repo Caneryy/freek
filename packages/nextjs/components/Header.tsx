@@ -79,7 +79,14 @@ export const Header = () => {
             <HeaderMenuLinks />
           </ul>
         </details>
-        <Link href="/" passHref className="hidden lg:flex items-center gap-2 ml-4 mr-6 shrink-0">
+        <Link href="/" passHref className="flex lg:hidden items-center gap-2 ml-2 mr-4 shrink-0">
+          <img src="/logo2.jpeg" alt="FREEK Logo" className="w-8 h-8 rounded-lg" />
+          <span className="font-black text-lg leading-tight tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 via-purple-500 to-pink-500">
+            FREEK
+          </span>
+        </Link>
+        <Link href="/" passHref className="hidden lg:flex items-center gap-3 ml-4 mr-6 shrink-0">
+          <img src="/logo2.jpeg" alt="FREEK Logo" className="w-10 h-10 rounded-lg" />
           <div className="flex flex-col">
             <span className="font-black text-xl leading-tight tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 via-purple-500 to-pink-500">
               FREEK
