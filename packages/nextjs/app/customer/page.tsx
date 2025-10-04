@@ -151,9 +151,13 @@ export default function CustomerPage() {
     return () => clearInterval(interval);
   }, []);
 
-  // Handle scroll wheel for carousel
+  // Handle scroll wheel for carousel - only when hovering over legendary NFTs
+  const [isHoveringCarousel, setIsHoveringCarousel] = useState(false);
+
   useEffect(() => {
     const handleWheel = (e: WheelEvent) => {
+      if (!isHoveringCarousel) return;
+
       e.preventDefault();
       if (e.deltaY > 0) {
         // Scroll down - next NFT
@@ -166,7 +170,7 @@ export default function CustomerPage() {
 
     window.addEventListener("wheel", handleWheel, { passive: false });
     return () => window.removeEventListener("wheel", handleWheel);
-  }, []);
+  }, [isHoveringCarousel]);
 
   if (loading) {
     return (
@@ -197,11 +201,17 @@ export default function CustomerPage() {
         <h2 className="text-4xl font-bold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500">
           ✨ LEGENDARY NFT&apos;ler
         </h2>
-        <div className="flex justify-center items-center gap-8 overflow-hidden">
+        <div
+          className="flex justify-center items-center gap-8 overflow-hidden cursor-pointer"
+          onMouseEnter={() => setIsHoveringCarousel(true)}
+          onMouseLeave={() => setIsHoveringCarousel(false)}
+        >
           {legendaryNFTs.map((nft, index) => {
-            const isCenter = index === currentFeaturedIndex;
-            const isLeft = index === (currentFeaturedIndex - 1 + 3) % 3;
-            const isRight = index === (currentFeaturedIndex + 1) % 3;
+            // Calculate the display position based on currentFeaturedIndex
+            const displayIndex = (index - currentFeaturedIndex + 3) % 3;
+            const isCenter = displayIndex === 0;
+            const isLeft = displayIndex === 2;
+            const isRight = displayIndex === 1;
 
             return (
               <div
