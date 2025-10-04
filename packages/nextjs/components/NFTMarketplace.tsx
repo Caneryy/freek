@@ -173,26 +173,6 @@ export const NFTMarketplace = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allNFTs, useMockData]);
 
-  const handleTransferNFT = async (listingId: number, price: bigint) => {
-    if (useMockData) {
-      // Simulate transferring in mock data
-      setNfts(prevNfts => prevNfts.map((nft, index) => (index === listingId - 1 ? { ...nft, isSold: true } : nft)));
-      alert(`Mock NFT #${listingId} transfer edildi! (${formatEther(price)} MONAD)`);
-    } else {
-      try {
-        await writeMarketplaceAsync({
-          functionName: "transferNFT",
-          args: [BigInt(listingId)],
-          value: price,
-        });
-        // Refetch NFTs after successful transfer
-        refetchNFTs();
-      } catch (error) {
-        console.error("Error transferring NFT:", error);
-      }
-    }
-  };
-
   const handleDepositSuccess = () => {
     refetchNFTs();
     setIsDepositModalOpen(false);
@@ -330,13 +310,11 @@ export const NFTMarketplace = () => {
                 ✨ LEGENDARY NFT&apos;ler
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
-                {nfts.slice(0, 3).map((nft, index) => (
+                {nfts.slice(0, 3).map(nft => (
                   <NFTCard
                     key={`${nft.nftContract}-${nft.tokenId}`}
                     nft={nft}
-                    listingId={index + 1}
                     isTopThree={true}
-                    onBuy={handleTransferNFT}
                     isOwner={nft.owner.toLowerCase() === connectedAddress?.toLowerCase()}
                   />
                 ))}
@@ -351,13 +329,11 @@ export const NFTMarketplace = () => {
                 💎 RARE NFT&apos;ler
               </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
-                {nfts.slice(3).map((nft, index) => (
+                {nfts.slice(3).map(nft => (
                   <NFTCard
                     key={`${nft.nftContract}-${nft.tokenId}`}
                     nft={nft}
-                    listingId={index + 4}
                     isTopThree={false}
-                    onBuy={handleTransferNFT}
                     isOwner={nft.owner.toLowerCase() === connectedAddress?.toLowerCase()}
                   />
                 ))}

@@ -1,6 +1,5 @@
 "use client";
 
-import { useState } from "react";
 import Image from "next/image";
 import { formatEther } from "viem";
 
@@ -17,26 +16,11 @@ interface ListedNFT {
 
 interface NFTCardProps {
   nft: ListedNFT;
-  listingId: number;
   isTopThree: boolean;
-  onBuy: (listingId: number, price: bigint) => void;
   isOwner: boolean;
 }
 
-export const NFTCard = ({ nft, listingId, isTopThree, onBuy, isOwner }: NFTCardProps) => {
-  const [isLoading, setIsLoading] = useState(false);
-
-  const handleBuy = async () => {
-    setIsLoading(true);
-    try {
-      await onBuy(listingId, nft.price);
-    } catch (error) {
-      console.error("Error buying NFT:", error);
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+export const NFTCard = ({ nft, isTopThree, isOwner }: NFTCardProps) => {
   const priceInEther = formatEther(nft.price);
   const isSold = nft.isSold;
 
@@ -119,16 +103,6 @@ export const NFTCard = ({ nft, listingId, isTopThree, onBuy, isOwner }: NFTCardP
 
         {/* Action Buttons */}
         <div className="card-actions justify-end mt-4">
-          {!isSold && !isOwner && (
-            <button
-              className={`btn btn-primary transition-all ${isLoading ? "loading" : ""}`}
-              onClick={handleBuy}
-              disabled={isLoading}
-            >
-              {isLoading ? "Transfer Ediliyor..." : "Transfer Et"}
-            </button>
-          )}
-
           {isOwner && !isSold && (
             <div
               className={`text-sm flex items-center gap-1 font-semibold ${
