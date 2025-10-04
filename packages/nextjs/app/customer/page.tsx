@@ -215,7 +215,7 @@ export default function CustomerPage() {
               LEGENDARY NFT&apos;ler
             </h2>
             <div
-              className="flex justify-center items-center gap-4 overflow-hidden cursor-pointer"
+              className="flex justify-center items-center gap-8 overflow-visible cursor-pointer px-8"
               data-carousel="legendary"
               onMouseEnter={() => setIsHoveringCarousel(true)}
               onMouseLeave={() => setIsHoveringCarousel(false)}
@@ -228,20 +228,20 @@ export default function CustomerPage() {
                 return (
                   <div
                     key={`${nft.nftContract}-${nft.tokenId}`}
-                    className={`transition-all duration-700 ease-in-out ${isCenter ? "scale-110 z-10" : "scale-90 z-0"}`}
+                    className={`transition-all duration-700 ease-in-out ${isCenter ? "scale-105 z-10" : "scale-95 z-0"}`}
                   >
                     <div
                       className={`card bg-base-100 shadow-2xl rounded-2xl ring-4 ring-yellow-500 ring-opacity-90 shadow-yellow-500/50 ${
-                        isCenter ? "w-96" : "w-80"
+                        isCenter ? "w-[420px]" : "w-[360px]"
                       }`}
                     >
                       <figure className="relative">
                         <Image
                           src={nft.imageUri}
                           alt={nft.name}
-                          width={isCenter ? 384 : 320}
-                          height={isCenter ? 384 : 320}
-                          className={`w-full object-cover rounded-t-2xl ${isCenter ? "h-96" : "h-80"} ${nft.isSold ? "opacity-60 grayscale" : ""}`}
+                          width={isCenter ? 420 : 360}
+                          height={isCenter ? 420 : 360}
+                          className={`w-full object-cover rounded-t-2xl ${isCenter ? "h-[420px]" : "h-[360px]"} ${nft.isSold ? "opacity-60 grayscale" : ""}`}
                         />
                         {nft.isSold && (
                           <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-10">
