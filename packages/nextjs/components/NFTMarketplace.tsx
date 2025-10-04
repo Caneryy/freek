@@ -188,7 +188,10 @@ export const NFTMarketplace = () => {
             </label>
           </div>
           {connectedAddress && (
-            <button className="btn btn-primary" onClick={() => setIsDepositModalOpen(true)}>
+            <button
+              className="btn btn-primary hover:scale-105 transition-transform"
+              onClick={() => setIsDepositModalOpen(true)}
+            >
               NFT Deposit Et
             </button>
           )}
@@ -196,18 +199,24 @@ export const NFTMarketplace = () => {
       </div>
 
       {/* Stats */}
-      <div className="stats shadow mb-8">
+      <div className="stats shadow-xl mb-8 border border-purple-900/30">
         <div className="stat">
-          <div className="stat-title">Toplam NFT</div>
-          <div className="stat-value text-primary">{nfts.length}</div>
+          <div className="stat-title text-gray-400">Toplam NFT</div>
+          <div className="stat-value text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 to-purple-500">
+            {nfts.length}
+          </div>
         </div>
         <div className="stat">
-          <div className="stat-title">Satılan NFT</div>
-          <div className="stat-value text-secondary">{nfts.filter(nft => nft.isSold).length}</div>
+          <div className="stat-title text-gray-400">Satılan NFT</div>
+          <div className="stat-value text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-rose-500">
+            {nfts.filter(nft => nft.isSold).length}
+          </div>
         </div>
         <div className="stat">
-          <div className="stat-title">Aktif NFT</div>
-          <div className="stat-value">{nfts.filter(nft => nft.isListed && !nft.isSold).length}</div>
+          <div className="stat-title text-gray-400">Aktif NFT</div>
+          <div className="stat-value text-transparent bg-clip-text bg-gradient-to-r from-yellow-400 to-amber-500">
+            {nfts.filter(nft => nft.isListed && !nft.isSold).length}
+          </div>
         </div>
       </div>
 
@@ -218,23 +227,57 @@ export const NFTMarketplace = () => {
           <h3 className="text-2xl font-bold mb-2">Henüz NFT yok</h3>
           <p className="text-base-content/70 mb-4">İlk NFT&apos;yi deposit ederek marketplace&apos;i başlatın!</p>
           {connectedAddress && (
-            <button className="btn btn-primary" onClick={() => setIsDepositModalOpen(true)}>
+            <button
+              className="btn btn-primary hover:scale-105 transition-transform"
+              onClick={() => setIsDepositModalOpen(true)}
+            >
               İlk NFT&apos;yi Deposit Et
             </button>
           )}
         </div>
       ) : (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-          {nfts.map((nft, index) => (
-            <NFTCard
-              key={`${nft.nftContract}-${nft.tokenId}`}
-              nft={nft}
-              listingId={index + 1}
-              isTopThree={index < 3}
-              onBuy={handleBuyNFT}
-              isOwner={nft.owner.toLowerCase() === connectedAddress?.toLowerCase()}
-            />
-          ))}
+        <div className="space-y-8">
+          {/* Top 3 NFTs - Premium Row */}
+          {nfts.slice(0, 3).length > 0 && (
+            <div>
+              <h3 className="text-2xl font-bold mb-6 text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500">
+                ✨ LEGENDARY NFT&apos;ler
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 max-w-6xl mx-auto">
+                {nfts.slice(0, 3).map((nft, index) => (
+                  <NFTCard
+                    key={`${nft.nftContract}-${nft.tokenId}`}
+                    nft={nft}
+                    listingId={index + 1}
+                    isTopThree={true}
+                    onBuy={handleBuyNFT}
+                    isOwner={nft.owner.toLowerCase() === connectedAddress?.toLowerCase()}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
+
+          {/* Other NFTs - Regular Grid */}
+          {nfts.slice(3).length > 0 && (
+            <div>
+              <h3 className="text-xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-gray-300 to-gray-400">
+                💎 RARE NFT&apos;ler
+              </h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+                {nfts.slice(3).map((nft, index) => (
+                  <NFTCard
+                    key={`${nft.nftContract}-${nft.tokenId}`}
+                    nft={nft}
+                    listingId={index + 4}
+                    isTopThree={false}
+                    onBuy={handleBuyNFT}
+                    isOwner={nft.owner.toLowerCase() === connectedAddress?.toLowerCase()}
+                  />
+                ))}
+              </div>
+            </div>
+          )}
         </div>
       )}
 

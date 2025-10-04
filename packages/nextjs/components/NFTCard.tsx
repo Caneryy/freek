@@ -43,16 +43,18 @@ export const NFTCard = ({ nft, listingId, isTopThree, onBuy, isOwner }: NFTCardP
 
   return (
     <div
-      className={`card bg-base-100 shadow-xl relative overflow-hidden ${
-        isTopThree ? "ring-4 ring-yellow-400 ring-opacity-75" : "ring-2 ring-gray-300 ring-opacity-50"
+      className={`card bg-base-100 shadow-xl relative overflow-hidden transition-all duration-300 group ${
+        isTopThree
+          ? "ring-4 ring-yellow-500 ring-opacity-90 shadow-yellow-500/50 hover:shadow-yellow-500/70 hover:ring-yellow-400"
+          : "ring-2 ring-gray-400 ring-opacity-40 hover:ring-gray-300 hover:shadow-gray-400/50"
       } ${isSold ? "opacity-60 grayscale" : ""}`}
     >
-      {/* Gold/Silver glow effect */}
+      {/* Glow effect - Background becomes brighter on hover */}
       <div
-        className={`absolute inset-0 pointer-events-none ${
+        className={`absolute inset-0 pointer-events-none transition-opacity duration-300 ${
           isTopThree
-            ? "bg-gradient-to-r from-yellow-400/20 via-yellow-300/30 to-yellow-400/20"
-            : "bg-gradient-to-r from-gray-300/10 via-gray-200/20 to-gray-300/10"
+            ? "bg-gradient-to-br from-yellow-500/20 via-amber-400/25 to-yellow-600/20 group-hover:from-yellow-500/40 group-hover:via-amber-400/50 group-hover:to-yellow-600/40"
+            : "bg-gradient-to-br from-gray-300/5 via-gray-400/10 to-gray-500/5 group-hover:from-gray-300/20 group-hover:via-gray-400/30 group-hover:to-gray-500/20"
         } ${isSold ? "hidden" : ""}`}
       />
 
@@ -71,18 +73,24 @@ export const NFTCard = ({ nft, listingId, isTopThree, onBuy, isOwner }: NFTCardP
         <Image
           src={nft.imageUri || "/placeholder-nft.svg"}
           alt={nft.name}
-          className="w-full h-64 object-cover"
-          width={500} // Add appropriate width
-          height={500} // Add appropriate height
+          className="w-full h-48 object-cover transition-transform duration-300"
+          width={400}
+          height={400}
           onError={e => {
             const target = e.target as HTMLImageElement;
             target.src = "/placeholder-nft.svg";
           }}
         />
-        {/* Top 3 badge */}
-        {isTopThree && !isSold && (
-          <div className="absolute top-2 right-2 bg-yellow-400 text-black font-bold px-2 py-1 rounded-full text-sm">
-            #{listingId}
+        {/* Badge */}
+        {!isSold && (
+          <div
+            className={`absolute top-2 right-2 font-bold px-3 py-1 rounded-full text-xs shadow-lg ${
+              isTopThree
+                ? "bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 text-black"
+                : "bg-gradient-to-r from-gray-400 to-gray-500 text-white"
+            }`}
+          >
+            {isTopThree ? "LEGENDARY" : "RARE"}
           </div>
         )}
       </figure>
@@ -96,7 +104,17 @@ export const NFTCard = ({ nft, listingId, isTopThree, onBuy, isOwner }: NFTCardP
         <div className="space-y-2">
           <div className="flex justify-between items-center">
             <span className="text-sm font-medium">Fiyat:</span>
-            <span className={`font-bold ${isSold ? "text-gray-500" : "text-primary"}`}>{priceInEther} MONAD</span>
+            <span
+              className={`font-bold ${
+                isSold
+                  ? "text-gray-500"
+                  : isTopThree
+                    ? "text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500"
+                    : "text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500"
+              }`}
+            >
+              {priceInEther} MONAD
+            </span>
           </div>
 
           <div className="flex justify-between items-center">
@@ -109,7 +127,7 @@ export const NFTCard = ({ nft, listingId, isTopThree, onBuy, isOwner }: NFTCardP
         <div className="card-actions justify-end mt-4">
           {!isSold && !isOwner && (
             <button
-              className={`btn btn-primary ${isLoading ? "loading" : ""}`}
+              className={`btn btn-primary transition-all ${isLoading ? "loading" : ""}`}
               onClick={handleBuy}
               disabled={isLoading}
             >
@@ -117,7 +135,15 @@ export const NFTCard = ({ nft, listingId, isTopThree, onBuy, isOwner }: NFTCardP
             </button>
           )}
 
-          {isOwner && !isSold && <div className="text-sm text-info">Sizin NFT&apos;niz</div>}
+          {isOwner && !isSold && (
+            <div
+              className={`text-sm flex items-center gap-1 font-semibold ${
+                isTopThree ? "text-yellow-400" : "text-purple-400"
+              }`}
+            >
+              <span>✨</span> Sizin NFT&apos;niz
+            </div>
+          )}
         </div>
       </div>
     </div>

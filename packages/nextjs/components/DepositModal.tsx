@@ -57,8 +57,10 @@ export const DepositModal = ({ isOpen, onClose, onSuccess }: DepositModalProps) 
 
   return (
     <div className="modal modal-open">
-      <div className="modal-box max-w-md">
-        <h3 className="font-bold text-lg mb-4">NFT Deposit Et</h3>
+      <div className="modal-box max-w-md border-2 border-purple-900">
+        <h3 className="font-bold text-lg mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-orange-400">
+          NFT Deposit Et
+        </h3>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div className="form-control">
@@ -136,7 +138,11 @@ export const DepositModal = ({ isOpen, onClose, onSuccess }: DepositModalProps) 
             <button type="button" className="btn btn-ghost" onClick={onClose} disabled={isLoading}>
               İptal
             </button>
-            <button type="submit" className={`btn btn-primary ${isLoading ? "loading" : ""}`} disabled={isLoading}>
+            <button
+              type="submit"
+              className={`btn btn-primary hover:scale-105 transition-transform ${isLoading ? "loading" : ""}`}
+              disabled={isLoading}
+            >
               {isLoading ? "Deposit Ediliyor..." : "Deposit Et"}
             </button>
           </div>
