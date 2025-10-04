@@ -125,7 +125,7 @@ export const NFTCard = ({ nft, listingId, isTopThree, onBuy, isOwner }: NFTCardP
               onClick={handleBuy}
               disabled={isLoading}
             >
-              {isLoading ? "Satın Alınıyor..." : "Satın Al"}
+              {isLoading ? "Transfer Ediliyor..." : "Transfer Et"}
             </button>
           )}
 
