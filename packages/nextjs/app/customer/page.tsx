@@ -193,7 +193,7 @@ export default function CustomerPage() {
   const soldOutNFTs = nfts.filter(nft => nft.isSold);
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-purple-800">
+    <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-purple-800 smooth-scroll">
       {/* Hero Section */}
       <div className="text-center py-16 px-4">
         <h1 className="text-6xl font-black mb-4 text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 via-purple-500 to-pink-500 drop-shadow-lg tracking-tight">
