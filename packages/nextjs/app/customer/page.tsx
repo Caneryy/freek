@@ -19,13 +19,6 @@ export default function CustomerPage() {
   const [nfts, setNfts] = useState<ListedNFT[]>([]);
   const [loading, setLoading] = useState(true);
   const [currentFeaturedIndex, setCurrentFeaturedIndex] = useState(0);
-  const [recentTransfers, setRecentTransfers] = useState<
-    Array<{
-      nft: ListedNFT;
-      recipient: string;
-      timestamp: Date;
-    }>
-  >([]);
 
   // Mock data for demonstration
   const mockNFTs: ListedNFT[] = useMemo(
@@ -148,36 +141,6 @@ export default function CustomerPage() {
   useEffect(() => {
     setNfts(mockNFTs);
     setLoading(false);
-
-    // Mock recent transfers data
-    const mockTransfers = [
-      {
-        nft: mockNFTs[0], // Golden Dragon #1
-        recipient: "0x1234...5678",
-        timestamp: new Date(Date.now() - 1000 * 60 * 5), // 5 minutes ago
-      },
-      {
-        nft: mockNFTs[4], // Digital Art #5
-        recipient: "0x9876...5432",
-        timestamp: new Date(Date.now() - 1000 * 60 * 15), // 15 minutes ago
-      },
-      {
-        nft: mockNFTs[6], // Pixel Art #7
-        recipient: "0xabcd...efgh",
-        timestamp: new Date(Date.now() - 1000 * 60 * 30), // 30 minutes ago
-      },
-      {
-        nft: mockNFTs[8], // Cool Frog #9
-        recipient: "0x5678...9abc",
-        timestamp: new Date(Date.now() - 1000 * 60 * 45), // 45 minutes ago
-      },
-      {
-        nft: mockNFTs[10], // Party Squad #11
-        recipient: "0xdef0...1234",
-        timestamp: new Date(Date.now() - 1000 * 60 * 60), // 1 hour ago
-      },
-    ];
-    setRecentTransfers(mockTransfers);
   }, [mockNFTs]);
 
   // Auto-rotate featured NFTs
@@ -227,6 +190,7 @@ export default function CustomerPage() {
     nft => nft.name.includes("Dragon") || nft.name.includes("Cat") || nft.name.includes("Monkey"),
   );
   const rareNFTs = nfts.filter(nft => !legendaryNFTs.includes(nft));
+  const soldOutNFTs = nfts.filter(nft => nft.isSold);
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-purple-800">
@@ -366,33 +330,40 @@ export default function CustomerPage() {
           </div>
         </div>
 
-        {/* Sidebar - Recent Transfers */}
+        {/* Sidebar - Sold Out NFTs */}
         <div className="w-80 flex-shrink-0">
-          <div className="sticky top-4">
-            <div className="bg-base-100/90 backdrop-blur-sm rounded-2xl shadow-xl border border-purple-500/20 p-4">
-              <h3 className="text-xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-purple-400 to-pink-500">
-                📊 Son Transferler
-              </h3>
-              <div className="space-y-3 max-h-96 overflow-y-auto scrollbar-hide">
-                {recentTransfers.map((transfer, index) => {
+          <div className="bg-base-100/90 backdrop-blur-sm rounded-2xl shadow-xl border border-purple-500/20 p-4">
+            <h3 className="text-xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-500">
+              ❌ Sold Out NFT&apos;ler
+            </h3>
+            <div className="space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto scrollbar-hide">
+              {soldOutNFTs.length === 0 ? (
+                <div className="text-center py-8">
+                  <div className="text-4xl mb-2">🎉</div>
+                  <div className="text-sm text-gray-400">Henüz sold out NFT yok!</div>
+                </div>
+              ) : (
+                soldOutNFTs.map((nft, index) => {
                   const isLegendary =
-                    transfer.nft.name.includes("Dragon") ||
-                    transfer.nft.name.includes("Cat") ||
-                    transfer.nft.name.includes("Monkey");
-                  const timeAgo = Math.floor((Date.now() - transfer.timestamp.getTime()) / (1000 * 60));
+                    nft.name.includes("Dragon") || nft.name.includes("Cat") || nft.name.includes("Monkey");
 
                   return (
-                    <div key={index} className="bg-base-200/50 rounded-xl p-3 border border-gray-600/30">
+                    <div key={index} className="bg-base-200/50 rounded-xl p-3 border border-red-500/30">
                       <div className="flex items-center gap-3 mb-2">
-                        <Image
-                          src={transfer.nft.imageUri}
-                          alt={transfer.nft.name}
-                          width={40}
-                          height={40}
-                          className="w-10 h-10 object-cover rounded-lg"
-                        />
+                        <div className="relative">
+                          <Image
+                            src={nft.imageUri}
+                            alt={nft.name}
+                            width={40}
+                            height={40}
+                            className="w-10 h-10 object-cover rounded-lg opacity-60 grayscale"
+                          />
+                          <div className="absolute inset-0 flex items-center justify-center">
+                            <div className="text-red-500 text-lg">❌</div>
+                          </div>
+                        </div>
                         <div className="flex-1 min-w-0">
-                          <div className="text-sm font-semibold truncate">{transfer.nft.name}</div>
+                          <div className="text-sm font-semibold truncate text-gray-500">{nft.name}</div>
                           <div
                             className={`text-xs px-2 py-1 rounded-full inline-block ${
                               isLegendary
@@ -407,21 +378,19 @@ export default function CustomerPage() {
                       <div className="text-xs text-gray-400 space-y-1">
                         <div className="flex justify-between">
                           <span>Fiyat:</span>
-                          <span className="font-semibold text-purple-400">{formatEther(transfer.nft.price)} MONAD</span>
+                          <span className="font-semibold text-gray-500 line-through">
+                            {formatEther(nft.price)} MONAD
+                          </span>
                         </div>
                         <div className="flex justify-between">
-                          <span>Alıcı:</span>
-                          <span className="font-mono text-xs">{transfer.recipient}</span>
-                        </div>
-                        <div className="flex justify-between">
-                          <span>Zaman:</span>
-                          <span>{timeAgo < 60 ? `${timeAgo}dk önce` : `${Math.floor(timeAgo / 60)}sa önce`}</span>
+                          <span>Durum:</span>
+                          <span className="font-semibold text-red-500">SOLD OUT</span>
                         </div>
                       </div>
                     </div>
                   );
-                })}
-              </div>
+                })
+              )}
             </div>
           </div>
         </div>
