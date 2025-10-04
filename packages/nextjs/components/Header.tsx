@@ -80,7 +80,7 @@ export const Header = () => {
             <span className="font-black text-xl leading-tight tracking-tight text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 via-purple-500 to-pink-500">
               FREEK
             </span>
-            <span className="text-xs text-purple-400 font-semibold tracking-wide">FEEL YOUR NFT&apos;S</span>
+            <span className="text-xs text-purple-400 font-semibold tracking-wide">NFT&apos;lerinizi Hissedin</span>
           </div>
         </Link>
         <ul className="hidden lg:flex lg:flex-nowrap menu menu-horizontal px-1 gap-2">

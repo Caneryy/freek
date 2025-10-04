@@ -12,7 +12,9 @@ const Home: NextPage = () => {
             <span className="block text-6xl font-black mb-3 text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 via-purple-500 to-pink-500 drop-shadow-lg tracking-tight">
               FREEK
             </span>
-            <span className="block text-2xl font-semibold text-purple-400 tracking-wide">FEEL YOUR NFT&apos;S</span>
+            <span className="block text-2xl font-semibold text-purple-400 tracking-wide">
+              NFT&apos;lerinizi Hissedin
+            </span>
           </h1>
         </div>
 
