@@ -127,17 +127,15 @@ export const NFTMarketplace = () => {
   useEffect(() => {
     if (useMockData) {
       setNfts(mockNFTs);
-      setLoading(false);
     } else if (allNFTs) {
       const nftData = allNFTs as ListedNFT[];
       // Sort by price (highest first)
       const sortedNFTs = nftData.sort((a, b) => Number(b.price - a.price));
       setNfts(sortedNFTs);
-      setLoading(false);
     } else {
       setNfts([]);
-      setLoading(false);
     }
+    setLoading(false);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [allNFTs, useMockData]);
 
