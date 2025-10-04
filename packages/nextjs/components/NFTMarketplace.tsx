@@ -1,6 +1,7 @@
 "use client";
 
 import { useEffect, useMemo, useState } from "react";
+import Image from "next/image";
 import { formatEther, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { DepositModal } from "~~/components/DepositModal";
@@ -24,6 +25,9 @@ export const NFTMarketplace = () => {
   const [isDepositModalOpen, setIsDepositModalOpen] = useState(false);
   const [loading, setLoading] = useState(true);
   const [useMockData, setUseMockData] = useState(true);
+  const [selectedNFT, setSelectedNFT] = useState<ListedNFT | null>(null);
+  const [recipientAddress, setRecipientAddress] = useState("");
+  const [isRandomModalOpen, setIsRandomModalOpen] = useState(false);
 
   // Mock data for demonstration
   const mockNFTs: ListedNFT[] = useMemo(
@@ -194,6 +198,48 @@ export const NFTMarketplace = () => {
     setIsDepositModalOpen(false);
   };
 
+  const handleRandomNFTSelect = () => {
+    const availableNFTs = nfts.filter(nft => !nft.isSold);
+    if (availableNFTs.length === 0) {
+      alert("Satılmamış NFT bulunamadı!");
+      return;
+    }
+    const randomIndex = Math.floor(Math.random() * availableNFTs.length);
+    const randomNFT = availableNFTs[randomIndex];
+    setSelectedNFT(randomNFT);
+    setIsRandomModalOpen(true);
+  };
+
+  const handleRandomNFTSend = async () => {
+    if (!selectedNFT || !recipientAddress) {
+      alert("Lütfen cüzdan adresini girin!");
+      return;
+    }
+
+    if (useMockData) {
+      // Simulate sending random NFT
+      setNfts(prevNfts => prevNfts.map(nft => (nft.tokenId === selectedNFT.tokenId ? { ...nft, isSold: true } : nft)));
+      alert(`Rastgele NFT "${selectedNFT.name}" ${recipientAddress} adresine gönderildi!`);
+      setSelectedNFT(null);
+      setRecipientAddress("");
+      setIsRandomModalOpen(false);
+    } else {
+      try {
+        await writeMarketplaceAsync({
+          functionName: "sendRandomNFT",
+          args: [selectedNFT.tokenId, recipientAddress],
+        });
+        alert(`Rastgele NFT "${selectedNFT.name}" ${recipientAddress} adresine gönderildi!`);
+        setSelectedNFT(null);
+        setRecipientAddress("");
+        setIsRandomModalOpen(false);
+        refetchNFTs();
+      } catch (error) {
+        console.error("Error sending random NFT:", error);
+      }
+    }
+  };
+
   if (loading) {
     return (
       <div className="flex justify-center items-center min-h-64">
@@ -220,12 +266,20 @@ export const NFTMarketplace = () => {
             </label>
           </div>
           {connectedAddress && (
-            <button
-              className="btn btn-primary hover:scale-105 transition-transform"
-              onClick={() => setIsDepositModalOpen(true)}
-            >
-              NFT Deposit Et
-            </button>
+            <>
+              <button
+                className="btn btn-primary hover:scale-105 transition-transform"
+                onClick={() => setIsDepositModalOpen(true)}
+              >
+                NFT Deposit Et
+              </button>
+              <button
+                className="btn btn-secondary hover:scale-105 transition-transform"
+                onClick={handleRandomNFTSelect}
+              >
+                🎲 Rastgele NFT Seç
+              </button>
+            </>
           )}
         </div>
       </div>
@@ -320,6 +374,56 @@ export const NFTMarketplace = () => {
           onClose={() => setIsDepositModalOpen(false)}
           onSuccess={handleDepositSuccess}
         />
+      )}
+
+      {/* Random NFT Modal */}
+      {isRandomModalOpen && selectedNFT && (
+        <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+          <div className="bg-base-100 p-6 rounded-2xl max-w-md w-full mx-4">
+            <h3 className="text-2xl font-bold mb-4 text-center">🎲 Rastgele NFT Seçildi!</h3>
+
+            <div className="text-center mb-6">
+              <div className="text-lg font-semibold mb-2">{selectedNFT.name}</div>
+              <div className="text-sm text-gray-400 mb-4">Fiyat: {formatEther(selectedNFT.price)} MONAD</div>
+              <Image
+                src={selectedNFT.imageUri}
+                alt={selectedNFT.name}
+                width={128}
+                height={128}
+                className="w-32 h-32 object-cover rounded-xl mx-auto"
+              />
+            </div>
+
+            <div className="mb-4">
+              <label className="label">
+                <span className="label-text">Alıcı Cüzdan Adresi:</span>
+              </label>
+              <input
+                type="text"
+                placeholder="0x..."
+                className="input input-bordered w-full"
+                value={recipientAddress}
+                onChange={e => setRecipientAddress(e.target.value)}
+              />
+            </div>
+
+            <div className="flex gap-3">
+              <button
+                className="btn btn-outline flex-1"
+                onClick={() => {
+                  setIsRandomModalOpen(false);
+                  setSelectedNFT(null);
+                  setRecipientAddress("");
+                }}
+              >
+                İptal
+              </button>
+              <button className="btn btn-primary flex-1" onClick={handleRandomNFTSend}>
+                🚀 NFT Gönder
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );
