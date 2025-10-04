@@ -55,7 +55,7 @@ export const NFTMarketplace = () => {
         price: parseEther("2.1"),
         isListed: true,
         isSold: false,
-        imageUri: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=400&fit=crop",
+        imageUri: "/nft3.jpeg",
         name: "Space Monkey #3",
       },
       {
@@ -65,7 +65,7 @@ export const NFTMarketplace = () => {
         price: parseEther("1.5"),
         isListed: true,
         isSold: true,
-        imageUri: "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=400&h=400&fit=crop",
+        imageUri: "/nft4.jpeg",
         name: "Sold Out NFT #4",
       },
       {
@@ -75,7 +75,7 @@ export const NFTMarketplace = () => {
         price: parseEther("0.9"),
         isListed: true,
         isSold: false,
-        imageUri: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=400&fit=crop",
+        imageUri: "/nft5.jpeg",
         name: "Digital Art #5",
       },
       {
@@ -85,7 +85,7 @@ export const NFTMarketplace = () => {
         price: parseEther("0.7"),
         isListed: true,
         isSold: false,
-        imageUri: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400&h=400&fit=crop",
+        imageUri: "/nft6.jpeg",
         name: "Abstract NFT #6",
       },
       {
