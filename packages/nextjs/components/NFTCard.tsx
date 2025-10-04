@@ -42,7 +42,7 @@ export const NFTCard = ({ nft, listingId, isTopThree, onBuy, isOwner }: NFTCardP
 
   return (
     <div
-      className={`card bg-base-100 shadow-xl relative overflow-hidden transition-all duration-300 group ${
+      className={`card bg-base-100 shadow-xl relative overflow-hidden transition-all duration-300 group rounded-2xl ${
         isTopThree
           ? "ring-4 ring-yellow-500 ring-opacity-90 shadow-yellow-500/50 hover:shadow-yellow-500/70 hover:ring-yellow-400"
           : "ring-2 ring-gray-400 ring-opacity-40 hover:ring-gray-300 hover:shadow-gray-400/50"
@@ -72,7 +72,7 @@ export const NFTCard = ({ nft, listingId, isTopThree, onBuy, isOwner }: NFTCardP
         <Image
           src={nft.imageUri || "/placeholder-nft.svg"}
           alt={nft.name}
-          className="w-full h-48 object-cover transition-transform duration-300"
+          className="w-full h-64 object-cover transition-transform duration-300"
           width={400}
           height={400}
           onError={e => {
@@ -83,7 +83,7 @@ export const NFTCard = ({ nft, listingId, isTopThree, onBuy, isOwner }: NFTCardP
         {/* Badge */}
         {!isSold && (
           <div
-            className={`absolute top-2 right-2 font-bold px-3 py-1 rounded-full text-xs shadow-lg ${
+            className={`absolute top-3 right-3 font-bold px-3 py-1 rounded-xl text-xs shadow-lg ${
               isTopThree
                 ? "bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 text-black"
                 : "bg-gradient-to-r from-gray-400 to-gray-500 text-white"
@@ -95,7 +95,7 @@ export const NFTCard = ({ nft, listingId, isTopThree, onBuy, isOwner }: NFTCardP
       </figure>
 
       {/* Card Content */}
-      <div className="card-body">
+      <div className="card-body rounded-b-2xl">
         <h2 className={`card-title ${isSold ? "text-gray-500" : ""}`}>
           {nft.name || `NFT #${nft.tokenId.toString()}`}
         </h2>
