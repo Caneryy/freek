@@ -212,7 +212,7 @@ export default function CustomerPage() {
           {/* Legendary NFTs - Gallery View */}
           <div className="py-12">
             <h2 className="text-4xl font-bold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500">
-              ✨ LEGENDARY NFT&apos;ler
+              LEGENDARY NFT&apos;ler
             </h2>
             <div
               className="flex justify-center items-center gap-4 overflow-hidden cursor-pointer"
@@ -287,7 +287,7 @@ export default function CustomerPage() {
           {/* Rare NFTs - Gallery */}
           <div className="py-16">
             <h2 className="text-4xl font-bold text-center mb-12 text-transparent bg-clip-text bg-gradient-to-r from-gray-300 to-gray-400">
-              💎 RARE NFT&apos;ler
+              RARE NFT&apos;ler
             </h2>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 max-w-7xl mx-auto">
               {rareNFTs.map(nft => (
@@ -334,7 +334,7 @@ export default function CustomerPage() {
         <div className="w-80 flex-shrink-0">
           <div className="bg-base-100/90 backdrop-blur-sm rounded-2xl shadow-xl border border-purple-500/20 p-4">
             <h3 className="text-xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-500">
-              ❌ Sold Out NFT&apos;ler
+              Sold Out NFT&apos;ler
             </h3>
             <div className="space-y-3 max-h-[calc(100vh-200px)] overflow-y-auto scrollbar-hide">
               {soldOutNFTs.length === 0 ? (
