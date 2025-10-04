@@ -155,21 +155,27 @@ export default function CustomerPage() {
   const [isHoveringCarousel, setIsHoveringCarousel] = useState(false);
 
   useEffect(() => {
-    const handleWheel = (e: WheelEvent) => {
+    const handleWheel = (e: Event) => {
       if (!isHoveringCarousel) return;
 
-      e.preventDefault();
-      if (e.deltaY > 0) {
+      const wheelEvent = e as WheelEvent;
+      wheelEvent.preventDefault();
+      wheelEvent.stopPropagation();
+
+      if (wheelEvent.deltaY > 0) {
         // Scroll down - next NFT
         setCurrentFeaturedIndex(prev => (prev + 1) % 3);
-      } else {
+      } else if (wheelEvent.deltaY < 0) {
         // Scroll up - previous NFT
         setCurrentFeaturedIndex(prev => (prev - 1 + 3) % 3);
       }
     };
 
-    window.addEventListener("wheel", handleWheel, { passive: false });
-    return () => window.removeEventListener("wheel", handleWheel);
+    const carouselElement = document.querySelector('[data-carousel="legendary"]');
+    if (carouselElement) {
+      carouselElement.addEventListener("wheel", handleWheel, { passive: false });
+      return () => carouselElement.removeEventListener("wheel", handleWheel);
+    }
   }, [isHoveringCarousel]);
 
   if (loading) {
@@ -196,13 +202,14 @@ export default function CustomerPage() {
         </p>
       </div>
 
-      {/* Legendary NFTs - Carousel */}
+      {/* Legendary NFTs - Gallery View */}
       <div className="py-12 px-4">
         <h2 className="text-4xl font-bold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500">
           ✨ LEGENDARY NFT&apos;ler
         </h2>
         <div
-          className="flex justify-center items-center gap-8 overflow-hidden cursor-pointer"
+          className="flex justify-center items-center gap-4 overflow-hidden cursor-pointer"
+          data-carousel="legendary"
           onMouseEnter={() => setIsHoveringCarousel(true)}
           onMouseLeave={() => setIsHoveringCarousel(false)}
         >
@@ -210,35 +217,31 @@ export default function CustomerPage() {
             // Calculate the display position based on currentFeaturedIndex
             const displayIndex = (index - currentFeaturedIndex + 3) % 3;
             const isCenter = displayIndex === 0;
-            const isLeft = displayIndex === 2;
-            const isRight = displayIndex === 1;
 
             return (
               <div
                 key={`${nft.nftContract}-${nft.tokenId}`}
-                className={`transition-all duration-700 ease-in-out ${
-                  isCenter ? "scale-125 z-10" : isLeft || isRight ? "scale-100 z-0" : "scale-75 opacity-50 z-0"
-                }`}
+                className={`transition-all duration-700 ease-in-out ${isCenter ? "scale-110 z-10" : "scale-90 z-0"}`}
               >
                 <div
                   className={`card bg-base-100 shadow-2xl rounded-2xl ring-4 ring-yellow-500 ring-opacity-90 shadow-yellow-500/50 ${
-                    isCenter ? "w-96" : "w-80"
+                    isCenter ? "w-80" : "w-64"
                   }`}
                 >
                   <figure className="relative">
                     <Image
                       src={nft.imageUri}
                       alt={nft.name}
-                      width={isCenter ? 384 : 320}
-                      height={isCenter ? 384 : 320}
-                      className={`w-full object-cover rounded-t-2xl ${isCenter ? "h-96" : "h-80"}`}
+                      width={isCenter ? 320 : 256}
+                      height={isCenter ? 320 : 256}
+                      className={`w-full object-cover rounded-t-2xl ${isCenter ? "h-80" : "h-64"}`}
                     />
                     <div className="absolute top-3 right-3 font-bold px-3 py-1 rounded-xl text-xs shadow-lg bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 text-black">
                       LEGENDARY
                     </div>
                   </figure>
                   <div className="card-body rounded-b-2xl">
-                    <h3 className={`card-title ${isCenter ? "text-2xl" : "text-xl"}`}>{nft.name}</h3>
+                    <h3 className={`card-title ${isCenter ? "text-xl" : "text-lg"}`}>{nft.name}</h3>
                     <div className="flex justify-between items-center">
                       <span className="text-sm font-medium">Fiyat:</span>
                       <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500">
