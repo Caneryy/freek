@@ -186,8 +186,10 @@ export default function CustomerPage() {
     );
   }
 
-  const legendaryNFTs = nfts.slice(0, 3);
-  const rareNFTs = nfts.slice(3);
+  const legendaryNFTs = nfts.filter(
+    nft => nft.name.includes("Dragon") || nft.name.includes("Cat") || nft.name.includes("Monkey"),
+  );
+  const rareNFTs = nfts.filter(nft => !legendaryNFTs.includes(nft));
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-purple-900 via-black to-purple-800">
@@ -225,17 +227,25 @@ export default function CustomerPage() {
               >
                 <div
                   className={`card bg-base-100 shadow-2xl rounded-2xl ring-4 ring-yellow-500 ring-opacity-90 shadow-yellow-500/50 ${
-                    isCenter ? "w-80" : "w-64"
+                    isCenter ? "w-96" : "w-80"
                   }`}
                 >
                   <figure className="relative">
                     <Image
                       src={nft.imageUri}
                       alt={nft.name}
-                      width={isCenter ? 320 : 256}
-                      height={isCenter ? 320 : 256}
-                      className={`w-full object-cover rounded-t-2xl ${isCenter ? "h-80" : "h-64"}`}
+                      width={isCenter ? 384 : 320}
+                      height={isCenter ? 384 : 320}
+                      className={`w-full object-cover rounded-t-2xl ${isCenter ? "h-96" : "h-80"} ${nft.isSold ? "opacity-60 grayscale" : ""}`}
                     />
+                    {nft.isSold && (
+                      <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-10">
+                        <div className="text-center">
+                          <div className="text-4xl mb-2">❌</div>
+                          <div className="text-white font-bold text-xl">SOLD OUT</div>
+                        </div>
+                      </div>
+                    )}
                     <div className="absolute top-3 right-3 font-bold px-3 py-1 rounded-xl text-xs shadow-lg bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 text-black">
                       LEGENDARY
                     </div>
@@ -286,8 +296,16 @@ export default function CustomerPage() {
                   alt={nft.name}
                   width={300}
                   height={300}
-                  className="w-full h-64 object-cover rounded-t-2xl"
+                  className={`w-full h-64 object-cover rounded-t-2xl ${nft.isSold ? "opacity-60 grayscale" : ""}`}
                 />
+                {nft.isSold && (
+                  <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-10">
+                    <div className="text-center">
+                      <div className="text-4xl mb-2">❌</div>
+                      <div className="text-white font-bold text-xl">SOLD OUT</div>
+                    </div>
+                  </div>
+                )}
                 <div className="absolute top-3 right-3 font-bold px-3 py-1 rounded-xl text-xs shadow-lg bg-gradient-to-r from-gray-400 to-gray-500 text-white">
                   RARE
                 </div>
