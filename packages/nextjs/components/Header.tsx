@@ -17,7 +17,7 @@ type HeaderMenuLink = {
 
 export const menuLinks: HeaderMenuLink[] = [
   {
-    label: "Marketplace",
+    label: "Seller View",
     href: "/",
   },
   {
