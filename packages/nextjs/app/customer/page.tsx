@@ -147,8 +147,25 @@ export default function CustomerPage() {
   useEffect(() => {
     const interval = setInterval(() => {
       setCurrentFeaturedIndex(prev => (prev + 1) % 3);
-    }, 3000);
+    }, 5000); // 5 saniyeye çıkardım
     return () => clearInterval(interval);
+  }, []);
+
+  // Handle scroll wheel for carousel
+  useEffect(() => {
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      if (e.deltaY > 0) {
+        // Scroll down - next NFT
+        setCurrentFeaturedIndex(prev => (prev + 1) % 3);
+      } else {
+        // Scroll up - previous NFT
+        setCurrentFeaturedIndex(prev => (prev - 1 + 3) % 3);
+      }
+    };
+
+    window.addEventListener("wheel", handleWheel, { passive: false });
+    return () => window.removeEventListener("wheel", handleWheel);
   }, []);
 
   if (loading) {
@@ -175,79 +192,67 @@ export default function CustomerPage() {
         </p>
       </div>
 
-      {/* Legendary NFTs - Horizontal Scroll */}
+      {/* Legendary NFTs - Carousel */}
       <div className="py-12 px-4">
         <h2 className="text-4xl font-bold text-center mb-8 text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500">
           ✨ LEGENDARY NFT&apos;ler
         </h2>
-        <div className="flex overflow-x-auto gap-6 pb-4 scrollbar-hide">
-          {legendaryNFTs.map((nft, index) => (
-            <div
-              key={`${nft.nftContract}-${nft.tokenId}`}
-              className={`flex-shrink-0 transition-all duration-500 ${
-                index === currentFeaturedIndex ? "scale-110" : "scale-100"
-              }`}
-            >
-              <div className="card bg-base-100 shadow-2xl w-80 rounded-2xl ring-4 ring-yellow-500 ring-opacity-90 shadow-yellow-500/50">
-                <figure className="relative">
-                  <Image
-                    src={nft.imageUri}
-                    alt={nft.name}
-                    width={320}
-                    height={320}
-                    className="w-full h-80 object-cover rounded-t-2xl"
-                  />
-                  <div className="absolute top-3 right-3 font-bold px-3 py-1 rounded-xl text-xs shadow-lg bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 text-black">
-                    LEGENDARY
-                  </div>
-                </figure>
-                <div className="card-body rounded-b-2xl">
-                  <h3 className="card-title text-xl">{nft.name}</h3>
-                  <div className="flex justify-between items-center">
-                    <span className="text-sm font-medium">Fiyat:</span>
-                    <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500">
-                      {formatEther(nft.price)} MONAD
-                    </span>
+        <div className="flex justify-center items-center gap-8 overflow-hidden">
+          {legendaryNFTs.map((nft, index) => {
+            const isCenter = index === currentFeaturedIndex;
+            const isLeft = index === (currentFeaturedIndex - 1 + 3) % 3;
+            const isRight = index === (currentFeaturedIndex + 1) % 3;
+
+            return (
+              <div
+                key={`${nft.nftContract}-${nft.tokenId}`}
+                className={`transition-all duration-700 ease-in-out ${
+                  isCenter ? "scale-125 z-10" : isLeft || isRight ? "scale-100 z-0" : "scale-75 opacity-50 z-0"
+                }`}
+              >
+                <div
+                  className={`card bg-base-100 shadow-2xl rounded-2xl ring-4 ring-yellow-500 ring-opacity-90 shadow-yellow-500/50 ${
+                    isCenter ? "w-96" : "w-80"
+                  }`}
+                >
+                  <figure className="relative">
+                    <Image
+                      src={nft.imageUri}
+                      alt={nft.name}
+                      width={isCenter ? 384 : 320}
+                      height={isCenter ? 384 : 320}
+                      className={`w-full object-cover rounded-t-2xl ${isCenter ? "h-96" : "h-80"}`}
+                    />
+                    <div className="absolute top-3 right-3 font-bold px-3 py-1 rounded-xl text-xs shadow-lg bg-gradient-to-r from-yellow-400 via-yellow-300 to-yellow-500 text-black">
+                      LEGENDARY
+                    </div>
+                  </figure>
+                  <div className="card-body rounded-b-2xl">
+                    <h3 className={`card-title ${isCenter ? "text-2xl" : "text-xl"}`}>{nft.name}</h3>
+                    <div className="flex justify-between items-center">
+                      <span className="text-sm font-medium">Fiyat:</span>
+                      <span className="font-bold text-transparent bg-clip-text bg-gradient-to-r from-yellow-300 via-yellow-400 to-amber-500">
+                        {formatEther(nft.price)} MONAD
+                      </span>
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
-          ))}
+            );
+          })}
         </div>
-      </div>
 
-      {/* Featured NFT - Center */}
-      <div className="py-16 px-4">
-        <h2 className="text-4xl font-bold text-center mb-12 text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-500 to-pink-500">
-          🌟 ÖNE ÇIKAN NFT
-        </h2>
-        <div className="flex justify-center">
-          <div className="card bg-base-100 shadow-2xl w-96 rounded-3xl ring-4 ring-fuchsia-500 ring-opacity-90 shadow-fuchsia-500/50 transform hover:scale-105 transition-all duration-300">
-            <figure className="relative">
-              <Image
-                src={legendaryNFTs[currentFeaturedIndex]?.imageUri || "/placeholder-nft.svg"}
-                alt={legendaryNFTs[currentFeaturedIndex]?.name || "Featured NFT"}
-                width={384}
-                height={384}
-                className="w-full h-96 object-cover rounded-t-3xl"
-              />
-              <div className="absolute top-4 right-4 font-bold px-4 py-2 rounded-xl text-sm shadow-lg bg-gradient-to-r from-fuchsia-400 via-pink-300 to-fuchsia-500 text-white">
-                FEATURED
-              </div>
-            </figure>
-            <div className="card-body rounded-b-3xl">
-              <h3 className="card-title text-2xl justify-center">
-                {legendaryNFTs[currentFeaturedIndex]?.name || "Featured NFT"}
-              </h3>
-              <div className="flex justify-between items-center">
-                <span className="text-lg font-medium">Fiyat:</span>
-                <span className="font-bold text-xl text-transparent bg-clip-text bg-gradient-to-r from-fuchsia-400 to-pink-500">
-                  {legendaryNFTs[currentFeaturedIndex] ? formatEther(legendaryNFTs[currentFeaturedIndex].price) : "0"}{" "}
-                  MONAD
-                </span>
-              </div>
-            </div>
-          </div>
+        {/* Scroll Indicator */}
+        <div className="flex justify-center mt-8 gap-2">
+          {legendaryNFTs.map((_, index) => (
+            <button
+              key={index}
+              className={`w-3 h-3 rounded-full transition-all duration-300 ${
+                index === currentFeaturedIndex ? "bg-yellow-400 scale-125" : "bg-gray-400 hover:bg-gray-300"
+              }`}
+              onClick={() => setCurrentFeaturedIndex(index)}
+            />
+          ))}
         </div>
       </div>
 
