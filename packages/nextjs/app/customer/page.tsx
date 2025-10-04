@@ -215,7 +215,7 @@ export default function CustomerPage() {
               LEGENDARY NFT&apos;ler
             </h2>
             <div
-              className="flex justify-center items-center gap-8 overflow-visible cursor-pointer px-8"
+              className="flex justify-center items-center gap-4 lg:gap-6 overflow-visible cursor-pointer px-4 lg:px-8"
               data-carousel="legendary"
               onMouseEnter={() => setIsHoveringCarousel(true)}
               onMouseLeave={() => setIsHoveringCarousel(false)}
@@ -232,16 +232,16 @@ export default function CustomerPage() {
                   >
                     <div
                       className={`card bg-base-100 shadow-2xl rounded-2xl ring-4 ring-yellow-500 ring-opacity-90 shadow-yellow-500/50 ${
-                        isCenter ? "w-[420px]" : "w-[360px]"
+                        isCenter ? "w-72 sm:w-80 lg:w-96" : "w-60 sm:w-72 lg:w-80"
                       }`}
                     >
                       <figure className="relative">
                         <Image
                           src={nft.imageUri}
                           alt={nft.name}
-                          width={isCenter ? 420 : 360}
-                          height={isCenter ? 420 : 360}
-                          className={`w-full object-cover rounded-t-2xl ${isCenter ? "h-[420px]" : "h-[360px]"} ${nft.isSold ? "opacity-60 grayscale" : ""}`}
+                          width={isCenter ? 384 : 320}
+                          height={isCenter ? 384 : 320}
+                          className={`w-full object-cover rounded-t-2xl ${isCenter ? "h-72 sm:h-80 lg:h-96" : "h-60 sm:h-72 lg:h-80"} ${nft.isSold ? "opacity-60 grayscale" : ""}`}
                         />
                         {nft.isSold && (
                           <div className="absolute inset-0 bg-black/60 flex items-center justify-center z-10">
@@ -331,7 +331,7 @@ export default function CustomerPage() {
         </div>
 
         {/* Sidebar - Sold Out NFTs */}
-        <div className="w-80 flex-shrink-0">
+        <div className="hidden lg:block w-80 flex-shrink-0">
           <div className="bg-base-100/90 backdrop-blur-sm rounded-2xl shadow-xl border border-purple-500/20 p-4">
             <h3 className="text-xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-500">
               Sold Out NFT&apos;ler
@@ -392,6 +392,69 @@ export default function CustomerPage() {
                 })
               )}
             </div>
+          </div>
+        </div>
+      </div>
+
+      {/* Mobile Sold Out NFTs */}
+      <div className="lg:hidden px-4 py-8">
+        <div className="bg-base-100/90 backdrop-blur-sm rounded-2xl shadow-xl border border-purple-500/20 p-4">
+          <h3 className="text-xl font-bold mb-4 text-transparent bg-clip-text bg-gradient-to-r from-red-400 to-pink-500">
+            Sold Out NFT&apos;ler
+          </h3>
+          <div className="space-y-3 max-h-64 overflow-y-auto scrollbar-hide">
+            {soldOutNFTs.length === 0 ? (
+              <div className="text-center py-8">
+                <div className="text-4xl mb-2">🎉</div>
+                <div className="text-sm text-gray-400">Henüz sold out NFT yok!</div>
+              </div>
+            ) : (
+              soldOutNFTs.map((nft, index) => {
+                const isLegendary =
+                  nft.name.includes("Dragon") || nft.name.includes("Cat") || nft.name.includes("Monkey");
+
+                return (
+                  <div key={index} className="bg-base-200/50 rounded-xl p-3 border border-red-500/30">
+                    <div className="flex items-center gap-3 mb-2">
+                      <div className="relative">
+                        <Image
+                          src={nft.imageUri}
+                          alt={nft.name}
+                          width={40}
+                          height={40}
+                          className="w-10 h-10 object-cover rounded-lg opacity-60 grayscale"
+                        />
+                        <div className="absolute inset-0 flex items-center justify-center">
+                          <div className="text-red-500 text-lg">❌</div>
+                        </div>
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="text-sm font-semibold truncate text-gray-500">{nft.name}</div>
+                        <div
+                          className={`text-xs px-2 py-1 rounded-full inline-block ${
+                            isLegendary
+                              ? "bg-gradient-to-r from-yellow-400 to-amber-500 text-black"
+                              : "bg-gradient-to-r from-gray-400 to-gray-500 text-white"
+                          }`}
+                        >
+                          {isLegendary ? "LEGENDARY" : "RARE"}
+                        </div>
+                      </div>
+                    </div>
+                    <div className="text-xs text-gray-400 space-y-1">
+                      <div className="flex justify-between">
+                        <span>Fiyat:</span>
+                        <span className="font-semibold text-gray-500 line-through">{formatEther(nft.price)} MONAD</span>
+                      </div>
+                      <div className="flex justify-between">
+                        <span>Durum:</span>
+                        <span className="font-semibold text-red-500">SOLD OUT</span>
+                      </div>
+                    </div>
+                  </div>
+                );
+              })
+            )}
           </div>
         </div>
       </div>
