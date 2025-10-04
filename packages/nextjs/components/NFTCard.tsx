@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Image from "next/image";
 import { formatEther } from "viem";
-import { Address } from "~~/components/scaffold-eth";
 
 interface ListedNFT {
   nftContract: string;
@@ -115,11 +114,6 @@ export const NFTCard = ({ nft, listingId, isTopThree, onBuy, isOwner }: NFTCardP
             >
               {priceInEther} MONAD
             </span>
-          </div>
-
-          <div className="flex justify-between items-center">
-            <span className="text-sm font-medium">Sahip:</span>
-            <Address address={nft.owner} />
           </div>
         </div>
 

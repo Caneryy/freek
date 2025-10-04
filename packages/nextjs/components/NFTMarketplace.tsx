@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { formatEther, parseEther } from "viem";
 import { useAccount } from "wagmi";
 import { DepositModal } from "~~/components/DepositModal";
@@ -26,88 +26,91 @@ export const NFTMarketplace = () => {
   const [useMockData, setUseMockData] = useState(true);
 
   // Mock data for demonstration
-  const mockNFTs: ListedNFT[] = [
-    {
-      nftContract: "0x1234567890123456789012345678901234567890",
-      tokenId: BigInt(1),
-      owner: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-      price: parseEther("3.2"),
-      isListed: true,
-      isSold: false,
-      imageUri: "https://images.unsplash.com/photo-1633332755192-727a05c4013d?w=400&h=400&fit=crop",
-      name: "Golden Dragon #1",
-    },
-    {
-      nftContract: "0x1234567890123456789012345678901234567890",
-      tokenId: BigInt(2),
-      owner: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-      price: parseEther("2.8"),
-      isListed: true,
-      isSold: false,
-      imageUri: "https://images.unsplash.com/photo-1518709268805-4e9042af2176?w=400&h=400&fit=crop",
-      name: "Cyber Cat #2",
-    },
-    {
-      nftContract: "0x1234567890123456789012345678901234567890",
-      tokenId: BigInt(3),
-      owner: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-      price: parseEther("2.1"),
-      isListed: true,
-      isSold: false,
-      imageUri: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=400&fit=crop",
-      name: "Space Monkey #3",
-    },
-    {
-      nftContract: "0x1234567890123456789012345678901234567890",
-      tokenId: BigInt(4),
-      owner: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-      price: parseEther("1.5"),
-      isListed: true,
-      isSold: true,
-      imageUri: "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=400&h=400&fit=crop",
-      name: "Sold Out NFT #4",
-    },
-    {
-      nftContract: "0x1234567890123456789012345678901234567890",
-      tokenId: BigInt(5),
-      owner: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-      price: parseEther("0.9"),
-      isListed: true,
-      isSold: false,
-      imageUri: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=400&fit=crop",
-      name: "Digital Art #5",
-    },
-    {
-      nftContract: "0x1234567890123456789012345678901234567890",
-      tokenId: BigInt(6),
-      owner: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-      price: parseEther("0.7"),
-      isListed: true,
-      isSold: false,
-      imageUri: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400&h=400&fit=crop",
-      name: "Abstract NFT #6",
-    },
-    {
-      nftContract: "0x1234567890123456789012345678901234567890",
-      tokenId: BigInt(7),
-      owner: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-      price: parseEther("0.4"),
-      isListed: true,
-      isSold: false,
-      imageUri: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=400&fit=crop",
-      name: "Pixel Art #7",
-    },
-    {
-      nftContract: "0x1234567890123456789012345678901234567890",
-      tokenId: BigInt(8),
-      owner: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
-      price: parseEther("0.2"),
-      isListed: true,
-      isSold: false,
-      imageUri: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=400&h=400&fit=crop",
-      name: "Minimalist #8",
-    },
-  ];
+  const mockNFTs: ListedNFT[] = useMemo(
+    () => [
+      {
+        nftContract: "0x1234567890123456789012345678901234567890",
+        tokenId: BigInt(1),
+        owner: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+        price: parseEther("3.2"),
+        isListed: true,
+        isSold: false,
+        imageUri: "/nft1.jpeg",
+        name: "Golden Dragon #1",
+      },
+      {
+        nftContract: "0x1234567890123456789012345678901234567890",
+        tokenId: BigInt(2),
+        owner: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+        price: parseEther("2.8"),
+        isListed: true,
+        isSold: false,
+        imageUri: "/nft2.jpeg",
+        name: "Cyber Cat #2",
+      },
+      {
+        nftContract: "0x1234567890123456789012345678901234567890",
+        tokenId: BigInt(3),
+        owner: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+        price: parseEther("2.1"),
+        isListed: true,
+        isSold: false,
+        imageUri: "https://images.unsplash.com/photo-1578662996442-48f60103fc96?w=400&h=400&fit=crop",
+        name: "Space Monkey #3",
+      },
+      {
+        nftContract: "0x1234567890123456789012345678901234567890",
+        tokenId: BigInt(4),
+        owner: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+        price: parseEther("1.5"),
+        isListed: true,
+        isSold: true,
+        imageUri: "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?w=400&h=400&fit=crop",
+        name: "Sold Out NFT #4",
+      },
+      {
+        nftContract: "0x1234567890123456789012345678901234567890",
+        tokenId: BigInt(5),
+        owner: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+        price: parseEther("0.9"),
+        isListed: true,
+        isSold: false,
+        imageUri: "https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=400&h=400&fit=crop",
+        name: "Digital Art #5",
+      },
+      {
+        nftContract: "0x1234567890123456789012345678901234567890",
+        tokenId: BigInt(6),
+        owner: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+        price: parseEther("0.7"),
+        isListed: true,
+        isSold: false,
+        imageUri: "https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?w=400&h=400&fit=crop",
+        name: "Abstract NFT #6",
+      },
+      {
+        nftContract: "0x1234567890123456789012345678901234567890",
+        tokenId: BigInt(7),
+        owner: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+        price: parseEther("0.4"),
+        isListed: true,
+        isSold: false,
+        imageUri: "https://images.unsplash.com/photo-1560472354-b33ff0c44a43?w=400&h=400&fit=crop",
+        name: "Pixel Art #7",
+      },
+      {
+        nftContract: "0x1234567890123456789012345678901234567890",
+        tokenId: BigInt(8),
+        owner: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
+        price: parseEther("0.2"),
+        isListed: true,
+        isSold: false,
+        imageUri: "https://images.unsplash.com/photo-1579546929518-9e396f3cc809?w=400&h=400&fit=crop",
+        name: "Minimalist #8",
+      },
+    ],
+    [],
+  );
 
   // Read all listed NFTs from contract
   const { data: allNFTs, refetch: refetchNFTs } = useScaffoldReadContract({
@@ -135,7 +138,7 @@ export const NFTMarketplace = () => {
       setNfts([]);
       setLoading(false);
     }
-  }, [allNFTs, useMockData]);
+  }, [allNFTs, useMockData, mockNFTs]);
 
   const handleBuyNFT = async (listingId: number, price: bigint) => {
     if (useMockData) {
