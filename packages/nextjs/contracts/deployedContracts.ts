@@ -5,19 +5,13 @@
 import { GenericContractsDeclaration } from "~~/utils/scaffold-eth/contract";
 
 const deployedContracts = {
-  10143: {
-    YourContract: {
-      address: "0x4521f201df19a879a0039ed1497cac3305915e72",
+  31337: {
+    NFTMarketplace: {
+      address: "0x700b6A60ce7EaaEA56F065753d8dcB9653dbAD35",
       abi: [
         {
           type: "constructor",
-          inputs: [
-            {
-              name: "_owner",
-              type: "address",
-              internalType: "address",
-            },
-          ],
+          inputs: [],
           stateMutability: "nonpayable",
         },
         {
@@ -26,16 +20,309 @@ const deployedContracts = {
         },
         {
           type: "function",
-          name: "greeting",
+          name: "buyNFT",
+          inputs: [
+            {
+              name: "listingId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "payable",
+        },
+        {
+          type: "function",
+          name: "delistNFT",
+          inputs: [
+            {
+              name: "listingId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "getAllListedNFTs",
           inputs: [],
           outputs: [
             {
               name: "",
+              type: "tuple[]",
+              internalType: "struct NFTMarketplace.ListedNFT[]",
+              components: [
+                {
+                  name: "nftContract",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "tokenId",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "owner",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "price",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "isListed",
+                  type: "bool",
+                  internalType: "bool",
+                },
+                {
+                  name: "isSold",
+                  type: "bool",
+                  internalType: "bool",
+                },
+                {
+                  name: "imageUri",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "name",
+                  type: "string",
+                  internalType: "string",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getNFTDetails",
+          inputs: [
+            {
+              name: "listingId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "tuple",
+              internalType: "struct NFTMarketplace.ListedNFT",
+              components: [
+                {
+                  name: "nftContract",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "tokenId",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "owner",
+                  type: "address",
+                  internalType: "address",
+                },
+                {
+                  name: "price",
+                  type: "uint256",
+                  internalType: "uint256",
+                },
+                {
+                  name: "isListed",
+                  type: "bool",
+                  internalType: "bool",
+                },
+                {
+                  name: "isSold",
+                  type: "bool",
+                  internalType: "bool",
+                },
+                {
+                  name: "imageUri",
+                  type: "string",
+                  internalType: "string",
+                },
+                {
+                  name: "name",
+                  type: "string",
+                  internalType: "string",
+                },
+              ],
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "getUserListings",
+          inputs: [
+            {
+              name: "user",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint256[]",
+              internalType: "uint256[]",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "listNFT",
+          inputs: [
+            {
+              name: "nftContract",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "tokenId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "price",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "imageUri",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "name",
+              type: "string",
+              internalType: "string",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "listedNFTs",
+          inputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "nftContract",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "tokenId",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "owner",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "price",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "isListed",
+              type: "bool",
+              internalType: "bool",
+            },
+            {
+              name: "isSold",
+              type: "bool",
+              internalType: "bool",
+            },
+            {
+              name: "imageUri",
+              type: "string",
+              internalType: "string",
+            },
+            {
+              name: "name",
               type: "string",
               internalType: "string",
             },
           ],
           stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "nftToListingId",
+          inputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "onERC721Received",
+          inputs: [
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "",
+              type: "address",
+              internalType: "address",
+            },
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+            {
+              name: "",
+              type: "bytes",
+              internalType: "bytes",
+            },
+          ],
+          outputs: [
+            {
+              name: "",
+              type: "bytes4",
+              internalType: "bytes4",
+            },
+          ],
+          stateMutability: "nonpayable",
         },
         {
           type: "function",
@@ -52,33 +339,14 @@ const deployedContracts = {
         },
         {
           type: "function",
-          name: "premium",
+          name: "renounceOwnership",
           inputs: [],
-          outputs: [
-            {
-              name: "",
-              type: "bool",
-              internalType: "bool",
-            },
-          ],
-          stateMutability: "view",
-        },
-        {
-          type: "function",
-          name: "setGreeting",
-          inputs: [
-            {
-              name: "_newGreeting",
-              type: "string",
-              internalType: "string",
-            },
-          ],
           outputs: [],
-          stateMutability: "payable",
+          stateMutability: "nonpayable",
         },
         {
           type: "function",
-          name: "totalCounter",
+          name: "totalListedNFTs",
           inputs: [],
           outputs: [
             {
@@ -91,12 +359,43 @@ const deployedContracts = {
         },
         {
           type: "function",
-          name: "userGreetingCounter",
+          name: "totalSoldNFTs",
+          inputs: [],
+          outputs: [
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
+            },
+          ],
+          stateMutability: "view",
+        },
+        {
+          type: "function",
+          name: "transferOwnership",
+          inputs: [
+            {
+              name: "newOwner",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+          outputs: [],
+          stateMutability: "nonpayable",
+        },
+        {
+          type: "function",
+          name: "userListings",
           inputs: [
             {
               name: "",
               type: "address",
               internalType: "address",
+            },
+            {
+              name: "",
+              type: "uint256",
+              internalType: "uint256",
             },
           ],
           outputs: [
@@ -117,28 +416,108 @@ const deployedContracts = {
         },
         {
           type: "event",
-          name: "GreetingChange",
+          name: "NFTDelisted",
           inputs: [
             {
-              name: "greetingSetter",
+              name: "listingId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "nftContract",
               type: "address",
               indexed: true,
               internalType: "address",
             },
             {
-              name: "newGreeting",
+              name: "tokenId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "NFTListed",
+          inputs: [
+            {
+              name: "listingId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "nftContract",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "tokenId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "owner",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+            {
+              name: "price",
+              type: "uint256",
+              indexed: false,
+              internalType: "uint256",
+            },
+            {
+              name: "imageUri",
               type: "string",
               indexed: false,
               internalType: "string",
             },
             {
-              name: "premium",
-              type: "bool",
+              name: "name",
+              type: "string",
               indexed: false,
-              internalType: "bool",
+              internalType: "string",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "event",
+          name: "NFTSold",
+          inputs: [
+            {
+              name: "listingId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
             },
             {
-              name: "value",
+              name: "nftContract",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "tokenId",
+              type: "uint256",
+              indexed: true,
+              internalType: "uint256",
+            },
+            {
+              name: "buyer",
+              type: "address",
+              indexed: false,
+              internalType: "address",
+            },
+            {
+              name: "price",
               type: "uint256",
               indexed: false,
               internalType: "uint256",
@@ -146,9 +525,54 @@ const deployedContracts = {
           ],
           anonymous: false,
         },
+        {
+          type: "event",
+          name: "OwnershipTransferred",
+          inputs: [
+            {
+              name: "previousOwner",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+            {
+              name: "newOwner",
+              type: "address",
+              indexed: true,
+              internalType: "address",
+            },
+          ],
+          anonymous: false,
+        },
+        {
+          type: "error",
+          name: "OwnableInvalidOwner",
+          inputs: [
+            {
+              name: "owner",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+        },
+        {
+          type: "error",
+          name: "OwnableUnauthorizedAccount",
+          inputs: [
+            {
+              name: "account",
+              type: "address",
+              internalType: "address",
+            },
+          ],
+        },
+        {
+          type: "error",
+          name: "ReentrancyGuardReentrantCall",
+          inputs: [],
+        },
       ],
       inheritedFunctions: {},
-      deployedOnBlock: 41148119,
     },
   },
 } as const;

@@ -5,14 +5,14 @@ import "./DeployHelpers.s.sol";
 import "../contracts/YourContract.sol";
 
 /**
- * @notice Deploy script for YourContract contract
+ * @notice Deploy script for NFTMarketplace contract
  * @dev Inherits ScaffoldETHDeploy which:
  *      - Includes forge-std/Script.sol for deployment
  *      - Includes ScaffoldEthDeployerRunner modifier
  *      - Provides `deployer` variable
  * Example:
  * yarn deploy --file DeployYourContract.s.sol  # local anvil chain
- * yarn deploy --file DeployYourContract.s.sol --network optimism # live network (requires keystore)
+ * yarn deploy --file DeployYourContract.s.sol --network monadTestnet # Monad testnet
  */
 contract DeployYourContract is ScaffoldETHDeploy {
     /**
@@ -25,6 +25,6 @@ contract DeployYourContract is ScaffoldETHDeploy {
      *      - Export contract addresses & ABIs to `nextjs` packages
      */
     function run() external ScaffoldEthDeployerRunner {
-        new YourContract(deployer);
+        new NFTMarketplace();
     }
 }

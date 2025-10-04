@@ -5,75 +5,216 @@ pragma solidity >=0.8.0 <0.9.0;
 import "forge-std/console.sol";
 
 // Use openzeppelin to inherit battle-tested implementations (ERC20, ERC721, etc)
-// import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721.sol";
+import "@openzeppelin/contracts/token/ERC721/IERC721Receiver.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/utils/ReentrancyGuard.sol";
 
 /**
- * A smart contract that allows changing a state variable of the contract and tracking the changes
- * It also allows the owner to withdraw the Ether in the contract
- * @author BuidlGuidl
+ * NFT Marketplace Contract for Monad Testnet
+ * Allows users to deposit NFTs, set prices, and transfer them
+ * @author Freek Team
  */
-contract YourContract {
+contract NFTMarketplace is IERC721Receiver, Ownable, ReentrancyGuard {
+    // Struct to store NFT information
+    struct ListedNFT {
+        address nftContract;
+        uint256 tokenId;
+        address owner;
+        uint256 price; // Price in wei (Monad)
+        bool isListed;
+        bool isSold;
+        string imageUri;
+        string name;
+    }
+
     // State Variables
-    address public immutable owner;
-    string public greeting = "Building Unstoppable Apps!!!";
-    bool public premium = false;
-    uint256 public totalCounter = 0;
-    mapping(address => uint256) public userGreetingCounter;
+    uint256 public totalListedNFTs;
+    uint256 public totalSoldNFTs;
+    
+    // Mapping from listing ID to NFT info
+    mapping(uint256 => ListedNFT) public listedNFTs;
+    
+    // Mapping from NFT contract + tokenId to listing ID
+    mapping(address => mapping(uint256 => uint256)) public nftToListingId;
+    
+    // Mapping from user address to their listed NFTs
+    mapping(address => uint256[]) public userListings;
+    
+    // Events
+    event NFTListed(
+        uint256 indexed listingId,
+        address indexed nftContract,
+        uint256 indexed tokenId,
+        address owner,
+        uint256 price,
+        string imageUri,
+        string name
+    );
+    
+    event NFTSold(
+        uint256 indexed listingId,
+        address indexed nftContract,
+        uint256 indexed tokenId,
+        address buyer,
+        uint256 price
+    );
+    
+    event NFTDelisted(
+        uint256 indexed listingId,
+        address indexed nftContract,
+        uint256 indexed tokenId
+    );
 
-    // Events: a way to emit log statements from smart contract that can be listened to by external parties
-    event GreetingChange(address indexed greetingSetter, string newGreeting, bool premium, uint256 value);
+    // Constructor
+    constructor() Ownable(msg.sender) {}
 
-    // Constructor: Called once on contract deployment
-    // Check packages/foundry/deploy/Deploy.s.sol
-    constructor(address _owner) {
-        owner = _owner;
-    }
-
-    // Modifier: used to define a set of rules that must be met before or after a function is executed
-    // Check the withdraw() function
-    modifier isOwner() {
-        // msg.sender: predefined variable that represents address of the account that called the current function
-        require(msg.sender == owner, "Not the Owner");
-        _;
+    /**
+     * @dev List an NFT for sale
+     * @param nftContract Address of the NFT contract
+     * @param tokenId Token ID of the NFT
+     * @param price Price in wei (Monad)
+     * @param imageUri URI of the NFT image
+     * @param name Name of the NFT
+     */
+    function listNFT(
+        address nftContract,
+        uint256 tokenId,
+        uint256 price,
+        string memory imageUri,
+        string memory name
+    ) external nonReentrant {
+        require(price > 0, "Price must be greater than 0");
+        require(nftToListingId[nftContract][tokenId] == 0, "NFT already listed");
+        
+        IERC721 nft = IERC721(nftContract);
+        require(nft.ownerOf(tokenId) == msg.sender, "Not the owner of this NFT");
+        require(nft.getApproved(tokenId) == address(this) || nft.isApprovedForAll(msg.sender, address(this)), "Contract not approved");
+        
+        // Transfer NFT to this contract
+        nft.safeTransferFrom(msg.sender, address(this), tokenId);
+        
+        totalListedNFTs++;
+        uint256 listingId = totalListedNFTs;
+        
+        listedNFTs[listingId] = ListedNFT({
+            nftContract: nftContract,
+            tokenId: tokenId,
+            owner: msg.sender,
+            price: price,
+            isListed: true,
+            isSold: false,
+            imageUri: imageUri,
+            name: name
+        });
+        
+        nftToListingId[nftContract][tokenId] = listingId;
+        userListings[msg.sender].push(listingId);
+        
+        emit NFTListed(listingId, nftContract, tokenId, msg.sender, price, imageUri, name);
     }
 
     /**
-     * Function that allows anyone to change the state variable "greeting" of the contract and increase the counters
-     *
-     * @param _newGreeting (string memory) - new greeting to save on the contract
+     * @dev Buy an NFT
+     * @param listingId ID of the listing to buy
      */
-    function setGreeting(string memory _newGreeting) public payable {
-        // Print data to the anvil chain console. Remove when deploying to a live network.
-
-        console.logString("Setting new greeting");
-        console.logString(_newGreeting);
-
-        greeting = _newGreeting;
-        totalCounter += 1;
-        userGreetingCounter[msg.sender] += 1;
-
-        // msg.value: built-in global variable that represents the amount of ether sent with the transaction
-        if (msg.value > 0) {
-            premium = true;
-        } else {
-            premium = false;
+    function buyNFT(uint256 listingId) external payable nonReentrant {
+        ListedNFT storage listing = listedNFTs[listingId];
+        require(listing.isListed, "NFT not listed");
+        require(!listing.isSold, "NFT already sold");
+        require(msg.value >= listing.price, "Insufficient payment");
+        require(msg.sender != listing.owner, "Cannot buy your own NFT");
+        
+        // Mark as sold
+        listing.isSold = true;
+        totalSoldNFTs++;
+        
+        // Transfer NFT to buyer
+        IERC721(listing.nftContract).safeTransferFrom(address(this), msg.sender, listing.tokenId);
+        
+        // Transfer payment to seller
+        (bool success,) = listing.owner.call{value: listing.price}("");
+        require(success, "Payment transfer failed");
+        
+        // Refund excess payment
+        if (msg.value > listing.price) {
+            (bool refundSuccess,) = msg.sender.call{value: msg.value - listing.price}("");
+            require(refundSuccess, "Refund failed");
         }
-
-        // emit: keyword used to trigger an event
-        emit GreetingChange(msg.sender, _newGreeting, msg.value > 0, msg.value);
+        
+        emit NFTSold(listingId, listing.nftContract, listing.tokenId, msg.sender, listing.price);
     }
 
     /**
-     * Function that allows the owner to withdraw all the Ether in the contract
-     * The function can only be called by the owner of the contract as defined by the isOwner modifier
+     * @dev Delist an NFT (only by owner)
+     * @param listingId ID of the listing to delist
      */
-    function withdraw() public isOwner {
-        (bool success,) = owner.call{ value: address(this).balance }("");
-        require(success, "Failed to send Ether");
+    function delistNFT(uint256 listingId) external nonReentrant {
+        ListedNFT storage listing = listedNFTs[listingId];
+        require(listing.owner == msg.sender, "Not the owner");
+        require(listing.isListed, "NFT not listed");
+        require(!listing.isSold, "NFT already sold");
+        
+        listing.isListed = false;
+        
+        // Transfer NFT back to owner
+        IERC721(listing.nftContract).safeTransferFrom(address(this), msg.sender, listing.tokenId);
+        
+        emit NFTDelisted(listingId, listing.nftContract, listing.tokenId);
     }
 
     /**
-     * Function that allows the contract to receive ETH
+     * @dev Get all listed NFTs (for marketplace display)
+     * @return Array of ListedNFT structs
      */
-    receive() external payable { }
+    function getAllListedNFTs() external view returns (ListedNFT[] memory) {
+        ListedNFT[] memory nfts = new ListedNFT[](totalListedNFTs);
+        for (uint256 i = 1; i <= totalListedNFTs; i++) {
+            nfts[i - 1] = listedNFTs[i];
+        }
+        return nfts;
+    }
+
+    /**
+     * @dev Get listed NFTs by user
+     * @param user Address of the user
+     * @return Array of listing IDs
+     */
+    function getUserListings(address user) external view returns (uint256[] memory) {
+        return userListings[user];
+    }
+
+    /**
+     * @dev Get NFT details by listing ID
+     * @param listingId ID of the listing
+     * @return ListedNFT struct
+     */
+    function getNFTDetails(uint256 listingId) external view returns (ListedNFT memory) {
+        return listedNFTs[listingId];
+    }
+
+    /**
+     * @dev Required function to receive NFTs
+     */
+    function onERC721Received(
+        address,
+        address,
+        uint256,
+        bytes memory
+    ) public virtual override returns (bytes4) {
+        return this.onERC721Received.selector;
+    }
+
+    /**
+     * @dev Withdraw contract balance (only owner)
+     */
+    function withdraw() external onlyOwner {
+        (bool success,) = owner().call{value: address(this).balance}("");
+        require(success, "Withdrawal failed");
+    }
+
+    /**
+     * @dev Function that allows the contract to receive ETH
+     */
+    receive() external payable {}
 }
