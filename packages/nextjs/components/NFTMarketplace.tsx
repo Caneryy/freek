@@ -135,7 +135,7 @@ export const NFTMarketplace = () => {
       setNfts([]);
       setLoading(false);
     }
-  }, [allNFTs, useMockData, mockNFTs]);
+  }, [allNFTs, useMockData]);
 
   const handleBuyNFT = async (listingId: number, price: bigint) => {
     if (useMockData) {
