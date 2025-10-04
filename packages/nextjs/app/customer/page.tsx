@@ -29,7 +29,7 @@ export default function CustomerPage() {
         owner: "0xabcdefabcdefabcdefabcdefabcdefabcdefabcd",
         price: parseEther("3.2"),
         isListed: true,
-        isSold: false,
+        isSold: true,
         imageUri: "/nft1.jpeg",
         name: "Golden Dragon #1",
       },
